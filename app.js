@@ -1,4 +1,5 @@
 const express = require('express')
+const ipMiddleware = require('./Location/ipMiddleware')
 const location = require('./Location/location')
 require('dotenv').config()
 const cors = require('cors')
