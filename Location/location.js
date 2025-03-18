@@ -1,7 +1,7 @@
 const { default: axios } = require("axios")
 
 const location = async(req, res) => {
-    const url = `https://ipapi.co/json/`
+    const url = `https://ipapi.co/${req.ip}/json/`
     try{
         axios({url:url, method:"GET", headers:{"Content-Type":"application/json"}})
         .then((value) => {
