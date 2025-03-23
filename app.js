@@ -6,8 +6,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const productRouter = require('./Products/productRouter')
 const AdminRouter = require('./Administrator/AdminRouter')
-const { default: mongoose } = require('mongoose')
-
+const mongoose = require('mongoose')
 const uri = process.env.uri
 const port = process.env.port || 8080
 const app = express() 
@@ -19,5 +18,5 @@ app.use('/products', productRouter)
 app.use('/admin', AdminRouter)
 app.get('/', async(req, res) => res.status(200).send('The api is working normally.'))
 app.get('/location', ipMiddleware, location)
-mongoose.connect(uri, {dbName:"blackgold"}).then(()=> console.log('connected to mongodb🔥')).catch(err => console.error(err))
+mongoose.connect(uri, {dbName:"blackgold", serverSelectionTimeoutMS:5000}).then(()=> console.log('connected to mongodb🔥')).catch(err => console.error(err))
 app.listen(port, ()=>console.log(`The server is running at http://localhost:${port}`))
