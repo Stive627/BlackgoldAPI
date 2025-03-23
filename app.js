@@ -4,11 +4,10 @@ const location = require('./Location/location')
 require('dotenv').config()
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { default: axios } = require('axios')
+const axios = require('axios')
 const productRouter = require('./Products/productRouter')
 const AdminRouter = require('./Administrator/AdminRouter')
-const { default: mongoose } = require('mongoose')
-
+const monggose = require('mongoose')
 const uri = process.env.uri
 const port = process.env.port || 8080
 const app = express() 
