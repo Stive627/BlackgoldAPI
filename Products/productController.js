@@ -1,4 +1,5 @@
 const ProductModel = require("./product")
+const fs = require('fs')
 
 const addProduct = async(req, res) => {
     const {name, price, category} = req.body
@@ -33,5 +34,17 @@ const getProducts = async(req, res) => {
         res.status(400).send(error)
     }    
 }
+const getSeasonalProducts = (req, res) => {
+    try {
+        fs.readdir('public/images/', async(err, files) => {
+            if(err){
+                return res.status(400).send(err)
+            }
+            res.status(200).send(files)
+        })
+    } catch (error) {
+        
+    }
+}
 
-module.exports = {addProduct, updateProduct, deleteProduct, getProducts}
+module.exports = {addProduct, updateProduct, deleteProduct, getProducts, getSeasonalProducts}
