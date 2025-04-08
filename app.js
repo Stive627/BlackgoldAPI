@@ -4,9 +4,9 @@ const location = require('./Location/location')
 require('dotenv').config()
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const productRouter = require('./Products/productRouter')
-const AdminRouter = require('./Administrator/AdminRouter')
 const monggose = require('mongoose')
+const AdminRouter = require('./Authentication/Administrator/AdminRouter')
+const productRouter = require('./Products/productRouter')
 const uri = process.env.uri
 const port = process.env.port || 8080
 const app = express() 
