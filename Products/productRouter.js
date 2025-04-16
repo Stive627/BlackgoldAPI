@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
         cb(null, encodeURI(file.originalname))
     } 
 })
-  
+
 const upload = multer({ storage: storage })
 const productRouter = express.Router()
 productRouter.post('/add', upload.single('img'), addProduct)

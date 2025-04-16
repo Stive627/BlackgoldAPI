@@ -5,7 +5,7 @@ const { getAdmins, AddAdmin, UpdateAdmin, DeleteAdmin } = require('./Administrat
 const AuthRouter = express.Router()
 
 //users
-AuthRouter.get('/user/sentotp', sendOTP)
+AuthRouter.get('/user/sendotp', sendOTP)
 
 //Admins
 AuthRouter.get('/admin', getAdmins)

@@ -1,20 +1,16 @@
-// Download the helper library from https://www.twilio.com/docs/node/install
-const twilio = require("twilio"); // Or, for ESM: import twilio from "twilio";
-require('dotenv').config()
-// Find your Account SID and Auth Token at twilio.com/console
-// and set the environment variables. See http://twil.io/secure
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
+const { Vonage } = require('@vonage/server-sdk')
 
-async function createMessage(otp) {
-  const message = await client.messages.create({
-    body: otp,
-    from: "+13655362562",
-    to: "+917696793453",
-  });
+const vonage = new Vonage({
+  apiKey: "3edd77e9",
+  apiSecret: "w5ikYIZ4I0L8tVk0"
+})
 
-  console.log(message.body);
+const from = "Vonage APIs"
+const to = "917696793453"
+
+async function createSMS(text) {
+    await vonage.sms.send({to, from, text})
+        .then(resp => { console.log('Message sent successfully'); console.log(resp); })
+        .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
 }
-
-module.exports = createMessage
+module.exports = createSMS

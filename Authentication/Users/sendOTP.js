@@ -1,11 +1,12 @@
-const createMessage = require("../sms")
+const createSMS = require("../sms")
 
 const sendOTP = (req, res) => {
     try {
         const otp = Math.floor(Math.random()*8999 + 1000)
-        createMessage(otp)
-        .then((value)=>{
-            res.status(200).send(`We have sent the otp to your number. ${otp}\n ${value}`)
+        const message = `Dear client, your otp is ${otp}`
+        createSMS(message)
+        .then(()=>{
+            res.status(200).send(otp)
         })
         .catch(err => res.status(400).send(err))   
     } catch (error) {
