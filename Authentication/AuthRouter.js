@@ -1,6 +1,6 @@
 const express = require('express')
 const sendOTP = require('./Users/sendOTP')
-const { getAdmins, AddAdmin, UpdateAdmin, DeleteAdmin } = require('./Administrator/AdminController')
+const { getAdmins, AddAdmin, UpdateAdmin, DeleteAdmin, login } = require('./Administrator/AdminController')
 
 const AuthRouter = express.Router()
 
@@ -8,9 +8,6 @@ const AuthRouter = express.Router()
 AuthRouter.get('/user/sendotp', sendOTP)
 
 //Admins
-AuthRouter.get('/admin', getAdmins)
-AuthRouter.post('/admin/add', AddAdmin)
-AuthRouter.put('/admin/update/:id', UpdateAdmin)
-AuthRouter.delete('/admin/delete/:id', DeleteAdmin)
+AuthRouter.post('/admin/login', login)
 
 module.exports = AuthRouter
