@@ -1,7 +1,7 @@
 const ProductModel = require("./product")
 const fs = require('fs')
 const addFromPrice = require("../functions/addFromPrice")
-const {S3Client, DeleteObjectCommand} = require('@aws-sdk/client-s3')
+const {S3Client, DeleteObjectsCommand} = require('@aws-sdk/client-s3')
 const getUrlKey = require("../functions/getUrlKey")
 require('dotenv').config()
 
@@ -15,36 +15,37 @@ const s3 = new S3Client({
 
 const addProduct = async(req, res) => {
     const {name, newPrice, unit, category, subCategory, quantity, description} = req.body
-    const path = req.file?.location
+    const descriptionImages = req.files
+    const urls = descriptionImages.map(elt => elt.location)
     const addedValue = +addFromPrice()
-    if(!name || !newPrice || !unit || !path || !category || !subCategory || !quantity || !description){
+    if(!name || !newPrice || !unit || !descriptionImages || !category || !subCategory || !quantity || !description){
         return res.status(400).send('The fields are missing.')
     }
-    const newProduct = new ProductModel({...req.body, img:path, lastPrice:+newPrice + addedValue})
+    const newProduct = new ProductModel({...req.body, descriptionImages:urls, lastPrice:+newPrice + addedValue})
     await newProduct.save()
     .then((value)=>res.status(200).send(value))
     .catch(err => res.status(400).send(err))
-
 }
 
 const updateProduct = async(req, res) => {
     const {name, newPrice, unit, category, subCategory, quantity, description} = req.body
-    const path = req.file?.location
+    const descriptionImages = req.files
+    const urls = descriptionImages.map(elt => elt.location)
     const addedValue = +addFromPrice()
-    if(!name || !newPrice || !unit || !path || !category || !subCategory || !quantity || !description){
+    if(!name || !newPrice || !unit || !descriptionImages || !category || !subCategory || !quantity || !description){
         return res.status(400).send('The fields are missing.')
     }
     try {
         const media = await ProductModel.findOne({_id:req.params._id})
-        if(media.img !== path){
-            const key = getUrlKey(media.url)
-            const command = new DeleteObjectCommand({
-                Bucket:process.env.AWS_BUCKET,
-                Key:decodeURI(key)
-            })
-            await s3.send(command)
-        }
-        await ProductModel.findOneAndUpdate({_id:req.params._id}, {...req.body, img:path, lastPrice:+newPrice + addedValue})
+        const keys = getUrlKey(media.descriptionImages)
+        const command = new DeleteObjectsCommand({
+            Bucket:process.env.AWS_BUCKET,
+            Delete:{
+                Objects:keys
+            }
+        })
+        await s3.send(command).then(()=>res.status(200).send('The product is deleted'))
+        await ProductModel.findOneAndUpdate({_id:req.params._id}, {...req.body, descriptionImages:urls, lastPrice:+newPrice + addedValue})
         .then((value)=>{res.status(200).send(value)})    
             
     } catch (error) {
@@ -54,15 +55,18 @@ const updateProduct = async(req, res) => {
 
 const deleteProduct = async(req, res) => {
     try {
-        const media = await ProductModel.deleteOne({_id:req.params._id})
-        const key = getUrlKey(media.url)
-        const command = new DeleteObjectCommand({
+        const media = await ProductModel.findOneAndDelete({_id:req.params._id})
+        const keys = getUrlKey(media.descriptionImages)
+        const command = new DeleteObjectsCommand({
             Bucket:process.env.AWS_BUCKET,
-            Key:decodeURI(key)
+            Delete:{
+                Objects:keys
+            }
         })
-        await s3.send(command)
-        res.status(200).send('The product is deleted')
-    } catch (error) {
+        await s3.send(command).then(()=>res.status(200).send('The product is deleted'))
+        
+    } 
+    catch (error) {
         res.status(400).send(error)
     }
 }

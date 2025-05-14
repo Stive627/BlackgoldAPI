@@ -6,7 +6,7 @@ const productSchema = new Schema({
     newPrice:{type:Number, required:true},
     lastPrice:{type:Number, required:false},
     unit:{type:String, required:true},
-    img:{type:String, required:true},
+    descriptionImages:{type:Array, required:true},
     category:{type:String, required:true},
     subCategory:{type:String, required:true},
     quantity:{type:String, required:true},

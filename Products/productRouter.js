@@ -1,6 +1,8 @@
 const express = require('express')
 const multer = require('multer')
 const {addProduct, updateProduct, deleteProduct, getProducts, getSeasonalProducts} = require('./productController')
+const {S3Client} = require('@aws-sdk/client-s3')
+const multerS3 = require('multer-s3')
 require('dotenv').config()
 
 const s3 = new S3Client({
@@ -10,7 +12,6 @@ const s3 = new S3Client({
         secretAccessKey:process.env.AWS_SECRET_ACCESS_KEY
     }
 })
-
 
 const storage = multerS3({
     s3:s3,
@@ -24,9 +25,10 @@ const storage = multerS3({
     }
 })
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage});
+
 const productRouter = express.Router()
-productRouter.post('/add', upload.single('img'), addProduct)
+productRouter.post('/add', upload.array('descriptionImages', 10), addProduct)
 productRouter.put('/update/:_id', upload.single('img'), updateProduct)
 productRouter.delete('/delete/:_id', deleteProduct)
 productRouter.get('/', getProducts)
